@@ -1,0 +1,12 @@
+body {
+  /* Reseting the default here */
+  margin: 0;
+}
+
+#canvas_wrapper {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+}
