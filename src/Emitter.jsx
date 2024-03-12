@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Particle from './Particle';
 
-export default function Emitter({ numParticles, glassPositions }) {
+export default function Emitter({ numParticles, initialPos, glassPositions }) {
   const [particleComponents, setParticleComponents] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function Emitter({ numParticles, glassPositions }) {
       setTimeout(() => {
         setParticleComponents((prevParticles) => [
           ...prevParticles,
-          <Particle key={index} initialPos={[0, 10, 0]} glassPositions={glassPositions} />,
+          <Particle key={index} initialPos={initialPos} glassPositions={glassPositions} />,
         ]);
       }, index * delay);
     };

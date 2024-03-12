@@ -20,31 +20,23 @@ export default function Particle({ initialPos, glassPositions }) {
   const currentPosition = new Vector3();
   const velocity = useRef(new Vector3());
   const acceleration = useRef(new Vector3());
-
-  const maxSpeed = 10;
-  const maxForce = 5;
-
+  const maxSpeed = 4;
+  const maxForce = 0.05;
 
   useEffect(() => {
     setIntersected(false)
-
     ref.current.setTranslation({ x: initialPos[0], y: initialPos[1], z: initialPos[2] });
-
     velocity.current.randomDirection();
     velocity.current.multiplyScalar(RandomInt(1, 10))
     acceleration.current.set(0, 0, 0)
   }, [initialPos]);
 
   const seek = (target) => {
-    if(!intersected){
     const force = new Vector3().subVectors(target, currentPosition)
     force.normalize().multiplyScalar(maxSpeed)
     const seekingForce = force.clone().sub(velocity.current)
     seekingForce.clampLength(0, maxForce)
-
-    // ref.current.addForce(seekingForce)
     applyForce(seekingForce)
-    }
   };
   
   const applyForce = (force) => {
@@ -52,53 +44,27 @@ export default function Particle({ initialPos, glassPositions }) {
       acceleration.current.copy(newAcceleration);
   };
 
-  const handleIntersection = (glassColor) => {
-    setColor(glassColor);
-    setVisible(true)
-    setIntersected(true)
-  }
-
   const decreaseLifetime = () => {
     setLifetime((value) => Math.max(value - 0.005, 0))
   };
 
   useFrame((delta) => {
-    if(!intersected){
     if (ref.current && meshRef.current) {
       velocity.current.add(acceleration.current)
       velocity.current.clampLength(0, maxSpeed);
       ref.current.setLinvel({ x: velocity.current.x, y: velocity.current.y, z: velocity.current.z });
-
-      // if(meshRef.current.parent.position){
-      // const newPosition = meshRef.current.parent.position.clone();
-      // newPosition.add(velocity.current);
-      // ref.current.setTranslation({ x: newPosition.x, y: newPosition.y, z: newPosition.z });
-      // }
-
       currentPosition.copy(meshRef.current.parent.position);
       acceleration.current.set(0,0,0)
     }
 
-    // if (ref.current && meshRef.current) {
-    //   velocity.current.addScaledVector(acceleration.current, delta);
-    //   velocity.current.clampLength(0, maxSpeed);
-    //   ref.current.setLinvel({ x: velocity.current.x, y: velocity.current.y, z: velocity.current.z });
-
-    //   const newPosition = meshRef.current.parent.position.clone();
-    //   newPosition.addScaledVector(velocity.current, delta);
-    //   ref.current.setTranslation({ x: newPosition.x, y: newPosition.y, z: newPosition.z });
-
-    //   currentPosition.copy(meshRef.current.parent.position);
-    //   acceleration.current.set(0, 0, 0);
-    // }
-
+    if(!intersected){
     if (glassPositions && Object.keys(glassPositions).length > 0) {
       const glassPositionsArray = Object.values(glassPositions);
       let nearestGlassPos = null;
       let nearestDistance = Number.MAX_VALUE;
     
       glassPositionsArray.forEach((glassPos) => {
-        const glassVector = new Vector3(glassPos[0], glassPos[1], glassPos[2])
+        const glassVector = new Vector3(glassPos[0]+2, glassPos[1], glassPos[2])
         const distance = currentPosition.distanceTo(glassVector);
     
         if (distance < nearestDistance) {
@@ -111,13 +77,7 @@ export default function Particle({ initialPos, glassPositions }) {
       }
     }
   }
-
-  // if (glassPositions && Object.keys(glassPositions).length > 0) {
-  //   const glassPositionsArray = Object.values(glassPositions);
-  //   const nearestGlassPos = glassPositionsArray[0];  // For simplicity, use the first glass position
-  //   seek(new Vector3(nearestGlassPos[0], nearestGlassPos[1], nearestGlassPos[2]));
-  // }
-  
+    // console.log(intersected)
 
   if(lifetime <= 0.006) {
     setLifetimeFinished(true)
@@ -128,11 +88,16 @@ export default function Particle({ initialPos, glassPositions }) {
     }
   }
 
-    // setTimeout(() => {
-    //   decreaseLifetime()
-    // }, 10000)
+    setTimeout(() => {
+      decreaseLifetime()
+    }, 10000)
 
   });
+
+  const handleIntersection = (glassColor) => {
+    setColor(glassColor);
+    // setIntersected(true)
+  }
 
   return !lifetimeFinished ? (
     <RigidBody
@@ -146,23 +111,32 @@ export default function Particle({ initialPos, glassPositions }) {
       <mesh scale={0.1} 
       ref={meshRef}
       position={[0,0,0]}
-      // visible={visible}
-      visible={true}
+      visible={visible}
+      // visible={true}
       >
         <sphereGeometry args={[5, 36, 36]} />
         <meshPhongMaterial color={color} opacity={lifetime} transparent={true}/>
       </mesh>
 
       <BallCollider sensor args={[5, 36, 36]} scale={0.1} position={[0,0,0]}
+      onIntersectionEnter={(payload) => {
+        if(payload.other.rigidBodyObject.name == "glassSensor"){
+          setIntersected(true)
+        }
+         else if(payload.other.rigidBodyObject.name == "glass"){
+          const glassColor = payload.other.rigidBodyObject.children[0]?.material?.color;
+          if(glassColor){
+            handleIntersection(glassColor)
+          }
+        }
+      }} 
       onIntersectionExit={(payload) => {
         if(payload.other.rigidBodyObject.name == "glass"){
-
-        const glassColor = payload.other.rigidBodyObject.children[0]?.material?.color;
-        if(glassColor){
-          handleIntersection(glassColor)
+        setVisible(true)
         }
-      }
-    }} />
+      }}
+    />
     </RigidBody>
   ) : null;
 }
+
