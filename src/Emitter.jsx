@@ -5,7 +5,7 @@ export default function Emitter({ numParticles, initialPos, glassPositions }) {
   const [particleComponents, setParticleComponents] = useState([]);
 
   useEffect(() => {
-    const delay = 200;
+    const delay = 100;
 
     const createParticles = (index) => {
       setTimeout(() => {

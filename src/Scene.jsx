@@ -59,11 +59,11 @@ function Scene() {
             <boxGeometry />
           </mesh> */}
 
-          <Emitter numParticles={100} initialPos={[10,6, -5]} glassPositions={glassPositions} />
-          <Emitter numParticles={100} initialPos={[1,13, -5]} glassPositions={glassPositions} /> 
-          <Emitter numParticles={100} initialPos={[-3,8, 0]} glassPositions={glassPositions} />
+          <Emitter numParticles={200} initialPos={[10,6, -5]} glassPositions={glassPositions} />
+          <Emitter numParticles={200} initialPos={[1,13, -5]} glassPositions={glassPositions} /> 
+          <Emitter numParticles={200} initialPos={[-3,8, 0]} glassPositions={glassPositions} />
 
-          <Emitter numParticles={200} initialPos={[0,10, 0]} glassPositions={glassPositions} />
+          <Emitter numParticles={300} initialPos={[0,10, 0]} glassPositions={glassPositions} />
 
         </Physics>
         </Suspense>
