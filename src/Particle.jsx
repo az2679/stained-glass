@@ -64,7 +64,7 @@ export default function Particle({ initialPos, glassPositions }) {
       let nearestDistance = Number.MAX_VALUE;
     
       glassPositionsArray.forEach((glassPos) => {
-        const glassVector = new Vector3(glassPos[0]+2, glassPos[1], glassPos[2])
+        const glassVector = new Vector3(glassPos[0], glassPos[1], glassPos[2])
         const distance = currentPosition.distanceTo(glassVector);
     
         if (distance < nearestDistance) {
@@ -96,7 +96,7 @@ export default function Particle({ initialPos, glassPositions }) {
 
   const handleIntersection = (glassColor) => {
     setColor(glassColor);
-    // setIntersected(true)
+    setIntersected(true)
   }
 
   return !lifetimeFinished ? (
@@ -114,16 +114,17 @@ export default function Particle({ initialPos, glassPositions }) {
       visible={visible}
       // visible={true}
       >
-        <sphereGeometry args={[5, 36, 36]} />
+        <sphereGeometry args={[5, 5, 5]} />
         <meshPhongMaterial color={color} opacity={lifetime} transparent={true}/>
       </mesh>
 
-      <BallCollider sensor args={[5, 36, 36]} scale={0.1} position={[0,0,0]}
+      <BallCollider sensor args={[5, 5, 5]} scale={0.1} position={[0,0,0]}
       onIntersectionEnter={(payload) => {
-        if(payload.other.rigidBodyObject.name == "glassSensor"){
-          setIntersected(true)
-        }
-         else if(payload.other.rigidBodyObject.name == "glass"){
+        // if(payload.other.rigidBodyObject.name == "glassSensor"){
+        //   setIntersected(true)
+        // }
+        //  else 
+         if(payload.other.rigidBodyObject.name == "glass"){
           const glassColor = payload.other.rigidBodyObject.children[0]?.material?.color;
           if(glassColor){
             handleIntersection(glassColor)
