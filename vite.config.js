@@ -7,10 +7,15 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [react()],
-  // root: resolve(__dirname, 'src'),
+  root: resolve(__dirname, 'src'),
   publicDir: resolve(__dirname, 'public'),
   base: '/stained-glass/',
   build: {
     outDir: '../docs',
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'src/index.html'),
+      },
+    },
   },
 });
