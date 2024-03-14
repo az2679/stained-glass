@@ -77,7 +77,6 @@ export default function Particle({ initialPos, glassPositions }) {
       }
     }
   }
-    // console.log(intersected)
 
   if(lifetime <= 0.006) {
     setLifetimeFinished(true)
@@ -87,11 +86,9 @@ export default function Particle({ initialPos, glassPositions }) {
       decreaseLifetime()
     }
   }
-
     setTimeout(() => {
       decreaseLifetime()
     }, 10000)
-
   });
 
   const handleIntersection = (glassColor) => {
@@ -120,10 +117,6 @@ export default function Particle({ initialPos, glassPositions }) {
 
       <BallCollider sensor args={[5, 5, 5]} scale={0.1} position={[0,0,0]}
       onIntersectionEnter={(payload) => {
-        // if(payload.other.rigidBodyObject.name == "glassSensor"){
-        //   setIntersected(true)
-        // }
-        //  else 
          if(payload.other.rigidBodyObject.name == "glass"){
           const glassColor = payload.other.rigidBodyObject.children[0]?.material?.color;
           if(glassColor){
