@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [react()],
   // root: resolve(__dirname, 'src'),
   publicDir: resolve(__dirname, 'public'),
+  base: '/stained-glass/',
   build: {
     outDir: '../docs',
   },
